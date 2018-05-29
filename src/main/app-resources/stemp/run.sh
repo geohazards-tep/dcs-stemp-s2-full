@@ -51,6 +51,12 @@ function main() {
 
   ciop-log "INFO" "Preparing file_input.cfg"
   ciop-log "INFO" "------------------------------------------------------------"
+  
+  for granule_band_04 in $( ls ${PROCESSING_HOME}/*B04.tif ); do
+      # TODO: we should get the value in a different way
+      echo ${granule_band_04}
+  done
+  
   leng=${#granule_band_04}
   echo "$(basename ${granule_band_04:0:leng-8})_B8A.tif" >> ${PROCESSING_HOME}/file_input.cfg
   echo "$(basename ${granule_band_04:0:leng-8})_B11.tif" >> ${PROCESSING_HOME}/file_input.cfg
