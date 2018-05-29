@@ -48,6 +48,18 @@ function main() {
   ciop-log "INFO" "Product uncompressed"
   ciop-log "INFO" "------------------------------------------------------------"
 
+  ciop-log "INFO" "Converting jp2 to tiff"
+  ciop-log "INFO" "------------------------------------------------------------"
+  
+  for granule_band in $( ls ${PROCESSING_HOME}/*.jp2 ); do
+      granule_band_identifier=$( basename ${granule_band})
+      granule_band_identifier=${granule_band_identifier%.jp2}
+
+      gdal_translate ${granule_band} ${PROCESSING_HOME}/${granule_band_identifier}.tif
+  done
+  
+  ciop-log "INFO" "Product uncompressed"
+  ciop-log "INFO" "------------------------------------------------------------"
 
   ciop-log "INFO" "Preparing file_input.cfg"
   ciop-log "INFO" "------------------------------------------------------------"
