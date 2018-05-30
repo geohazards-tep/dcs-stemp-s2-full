@@ -4,8 +4,10 @@ source /application/libexec/functions.sh
 
 export LM_LICENSE_FILE=1700@idl.terradue.com
 export STEMP_BIN=/opt/STEMP-S2/bin
+#export STEMP_BIN=/data/code/code_S2
 export IDL_BIN=/usr/local/bin
 export PROCESSING_HOME=${TMPDIR}/PROCESSING
+export GDAL_DATA=/opt/anaconda/share/gdal
 
 function main() {
 
@@ -54,8 +56,11 @@ function main() {
   for granule_band in $( ls ${PROCESSING_HOME}/*.jp2 ); do
       granule_band_identifier=$( basename ${granule_band})
       granule_band_identifier=${granule_band_identifier%.jp2}
+      gdalinfo ${granule_band} 
 
-      gdal_translate ${granule_band} ${PROCESSING_HOME}/${granule_band_identifier}.tif
+      gdal_translate ${granule_band} ${PROCESSING_HOME}/${granule_band_identifier}.tmp
+     # force to the 20m resolution
+      gdalwarp -tr 20 20 ${PROCESSING_HOME}/${granule_band_identifier}.tmp ${PROCESSING_HOME}/${granule_band_identifier}.tif
   done
   
   ciop-log "INFO" "Product uncompressed"
@@ -66,6 +71,9 @@ function main() {
   
   for granule_band_04 in $( ls ${PROCESSING_HOME}/*B04.tif ); do
       # TODO: we should get the value in a different way
+    # Converting B04 from 10m to 20m resolution
+    mv ${granule_band_04} ${granule_band_04}.tmp
+    gdalwarp -tr 20 20 ${granule_band_04}.tmp ${granule_band_04}
       echo ${granule_band_04}
   done
   
@@ -85,7 +93,7 @@ function main() {
   ciop-log "INFO" "------------------------------------------------------------"
 
   if [ "${DEBUG}" = "true" ]; then
-    ciop-publish -m ${PROCESSING_HOME}/*.TIF || return $?
+  #  ciop-publish -m ${PROCESSING_HOME}/*.TIF || return $?
     ciop-publish -m ${PROCESSING_HOME}/*.tif || return $?
   fi
 
