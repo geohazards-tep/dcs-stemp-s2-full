@@ -96,10 +96,7 @@ function generateQuicklook() {
        -r '/VRTDataset/VRTRasterBand/ColorTable/EntryTMP' -v 'Entry' ${target}/${filename}.vrt
   done
 
-  /opt/anaconda/bin/gdal_translate -of PNG -ot Byte ${target}/${filename}.vrt ${target}/${filename}.png 1>&2
-
-  listgeo -tfw ${input}
-  mv ${target}/${filename}.tfw ${target}/${filename}.pngw
+  /opt/anaconda/bin/gdal_translate -of GTiff -ot Byte ${target}/${filename}.vrt ${target}/${filename}.rgb.tif 1>&2
 }
 
 function convertDemToGeoTIFF() {

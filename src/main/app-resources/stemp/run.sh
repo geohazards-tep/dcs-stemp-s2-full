@@ -116,7 +116,7 @@ function main() {
   generateQuicklook ${string_inp:0:leng-8}_HOT_SPOT.tif ${PROCESSING_HOME}
 
   ciop-log "INFO" "Quicklooks generated:"
-  ls -l ${PROCESSING_HOME}/*HOT_SPOT*.png* 1>&2
+  ls -l ${PROCESSING_HOME}/*HOT_SPOT*.rgb* 1>&2
   ciop-log "INFO" "------------------------------------------------------------"
   
   ciop-log "INFO" "Preparing metadata file"
@@ -140,7 +140,6 @@ function main() {
   ciop-log "INFO" "Staging-out results"
   ciop-log "INFO" "------------------------------------------------------------"
   ciop-publish -m ${PROCESSING_HOME}/*HOT_SPOT*.tif || return $?
-  ciop-publish -m ${PROCESSING_HOME}/*HOT_SPOT*.png* || return $?
   ciop-publish -m ${METAFILE} || return $?
   [ ${res} -ne 0 ] && return ${ERR_PUBLISH}
 
