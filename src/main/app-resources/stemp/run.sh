@@ -129,6 +129,10 @@ function main() {
   echo "#Input scene" >> ${METAFILE}
   echo "Input product=${identifier}" >> ${METAFILE}
   echo "Input product tile=$( echo ${identifier} | cut -d '_' -f 6)" >> ${METAFILE}
+  # Resolution is fixed to 20m because:
+  # - Bands B8A, B11 and B12 have already 20m resolution (https://earth.esa.int/web/sentinel/user-guides/sentinel-2-msi/resolutions/spatial)
+  # - Band B04 is converted to 20m
+  echo "Resolution=20m" >> ${METAFILE}
   echo "#STEMP specifics" >> ${METAFILE}
   echo "Producer=INGV"  >> ${METAFILE}
   echo "Service name=STEMP-S2 Full"  >> ${METAFILE}
