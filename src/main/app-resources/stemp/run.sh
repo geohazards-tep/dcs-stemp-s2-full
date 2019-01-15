@@ -124,13 +124,16 @@ function main() {
   METAFILE=${PROCESSING_HOME}/${string_inp:0:leng-8}_HOT_SPOT.tif.properties
 
   echo "#Predefined Metadata" >> ${METAFILE}
-  echo "title=STEMP - HOT-SPOT detection" >> ${METAFILE}
+  echo "title=STEMP - HOT-SPOT detection - ${date}" >> ${METAFILE}
   echo "date=${date}" >> ${METAFILE}
   echo "#Input scene" >> ${METAFILE}
-  echo "Satellite=${mission}" >> ${METAFILE}
-  echo "#STEMP Parameters" >> ${METAFILE}
-  echo "HOT\ SPOT=Hot pixels(red),very hot pixels(yellow)"  >> ${METAFILE}
+  echo "Input product=${identifier}" >> ${METAFILE}
+  echo "Input product tile=$( echo ${identifier} | cut -d '_' -f 6)" >> ${METAFILE}
+  echo "#STEMP specifics" >> ${METAFILE}
   echo "Producer=INGV"  >> ${METAFILE}
+  echo "Service name=STEMP-S2 Full"  >> ${METAFILE}
+  echo "Service version=1.2.1"  >> ${METAFILE}
+  echo "HOT\ SPOT=Hot pixels(red),very hot pixels(yellow)"  >> ${METAFILE}
   echo "#EOF"  >> ${METAFILE}
   
   ciop-log "INFO" "Metadata file content:"
