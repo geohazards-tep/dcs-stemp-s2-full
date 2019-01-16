@@ -123,22 +123,18 @@ function main() {
   ciop-log "INFO" "------------------------------------------------------------"
   METAFILE=${PROCESSING_HOME}/${string_inp:0:leng-8}_HOT_SPOT.tif.properties
 
-  echo "#Predefined Metadata" >> ${METAFILE}
   echo "title=STEMP - HOT-SPOT detection - ${date}" >> ${METAFILE}
   echo "date=${date}" >> ${METAFILE}
-  echo "#Input scene" >> ${METAFILE}
-  echo "Input product=${identifier}" >> ${METAFILE}
-  echo "Input product tile=$( echo ${identifier} | cut -d '_' -f 6)" >> ${METAFILE}
+  echo "Input\ product=${identifier}" >> ${METAFILE}
+  echo "Input\ product\ tile=$( echo ${identifier} | cut -d '_' -f 6)" >> ${METAFILE}
   # Resolution is fixed to 20m because:
   # - Bands B8A, B11 and B12 have already 20m resolution (https://earth.esa.int/web/sentinel/user-guides/sentinel-2-msi/resolutions/spatial)
   # - Band B04 is converted to 20m
   echo "Resolution=20m" >> ${METAFILE}
-  echo "#STEMP specifics" >> ${METAFILE}
   echo "Producer=INGV"  >> ${METAFILE}
-  echo "Service name=STEMP-S2 Full"  >> ${METAFILE}
-  echo "Service version=1.2.1"  >> ${METAFILE}
+  echo "Service\ name=STEMP-S2 Full"  >> ${METAFILE}
+  echo "Service\ version=1.2.1"  >> ${METAFILE}
   echo "HOT\ SPOT=Hot pixels(red),very hot pixels(yellow)"  >> ${METAFILE}
-  echo "#EOF"  >> ${METAFILE}
   
   ciop-log "INFO" "Metadata file content:"
   cat ${PROCESSING_HOME}/${string_inp:0:leng-8}_HOT_SPOT.tif.properties 1>&2
