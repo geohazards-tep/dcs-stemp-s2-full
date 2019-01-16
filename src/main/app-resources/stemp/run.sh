@@ -143,6 +143,16 @@ function main() {
   ciop-log "INFO" "Metadata file content:"
   cat ${PROCESSING_HOME}/${string_inp:0:leng-8}_HOT_SPOT.tif.properties 1>&2
   ciop-log "INFO" "------------------------------------------------------------"
+
+  ciop-log "INFO" "Compressing results using LZW compression algorithm"
+  ciop-log "INFO" "------------------------------------------------------------"
+  
+  suffix=".lzw.compressed"
+  find ${PROCESSING_HOME} -name "*_HOT_SPOT*.tif" -exec gdal_translate -of GTiff -co "COMPRESS=LZW" -co "TILED=YES" {} {}${suffix} \;
+  find ${PROCESSING_HOME} -type f -name "*${suffix}" | while read f; do mv "$f" "${f%${suffix}}"; done
+ 
+  ciop-log "INFO" "Results compressed"
+  ciop-log "INFO" "------------------------------------------------------------"
   
   ciop-log "INFO" "Staging-out results"
   ciop-log "INFO" "------------------------------------------------------------"
