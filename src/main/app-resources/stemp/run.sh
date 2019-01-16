@@ -124,17 +124,34 @@ function main() {
   METAFILE=${PROCESSING_HOME}/${string_inp:0:leng-8}_HOT_SPOT.tif.properties
 
   echo "#Predefined Metadata" >> ${METAFILE}
-  echo "title=STEMP - HOT-SPOT detection" >> ${METAFILE}
+  echo "title=STEMP - HOT-SPOT detection - ${date}" >> ${METAFILE}
   echo "date=${date}" >> ${METAFILE}
   echo "#Input scene" >> ${METAFILE}
-  echo "Satellite=${mission}" >> ${METAFILE}
-  echo "#STEMP Parameters" >> ${METAFILE}
-  echo "HOT\ SPOT=Hot pixels(red),very hot pixels(yellow)"  >> ${METAFILE}
+  echo "Input product=${identifier}" >> ${METAFILE}
+  echo "Input product tile=$( echo ${identifier} | cut -d '_' -f 6)" >> ${METAFILE}
+  # Resolution is fixed to 20m because:
+  # - Bands B8A, B11 and B12 have already 20m resolution (https://earth.esa.int/web/sentinel/user-guides/sentinel-2-msi/resolutions/spatial)
+  # - Band B04 is converted to 20m
+  echo "Resolution=20m" >> ${METAFILE}
+  echo "#STEMP specifics" >> ${METAFILE}
   echo "Producer=INGV"  >> ${METAFILE}
+  echo "Service name=STEMP-S2 Full"  >> ${METAFILE}
+  echo "Service version=1.2.1"  >> ${METAFILE}
+  echo "HOT\ SPOT=Hot pixels(red),very hot pixels(yellow)"  >> ${METAFILE}
   echo "#EOF"  >> ${METAFILE}
   
   ciop-log "INFO" "Metadata file content:"
   cat ${PROCESSING_HOME}/${string_inp:0:leng-8}_HOT_SPOT.tif.properties 1>&2
+  ciop-log "INFO" "------------------------------------------------------------"
+
+  ciop-log "INFO" "Compressing results using LZW compression algorithm"
+  ciop-log "INFO" "------------------------------------------------------------"
+  
+  suffix=".lzw.compressed"
+  find ${PROCESSING_HOME} -name "*_HOT_SPOT*.tif" -exec gdal_translate -of GTiff -co "COMPRESS=LZW" -co "TILED=YES" {} {}${suffix} \;
+  find ${PROCESSING_HOME} -type f -name "*${suffix}" | while read f; do mv "$f" "${f%${suffix}}"; done
+ 
+  ciop-log "INFO" "Results compressed"
   ciop-log "INFO" "------------------------------------------------------------"
   
   ciop-log "INFO" "Staging-out results"
