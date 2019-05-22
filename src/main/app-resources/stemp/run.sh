@@ -44,8 +44,16 @@ function main() {
 
   ciop-log "INFO" "Uncompressing product"
   ciop-log "INFO" "------------------------------------------------------------"
-  unzip -qq -o -j ${product} */GRANULE/*/IMG_DATA/*B04.jp2 */GRANULE/*/IMG_DATA/*B8A.jp2 */GRANULE/*/IMG_DATA/*B11.jp2 */GRANULE/*/IMG_DATA/*B12.jp2 -d ${PROCESSING_HOME} 
-  res=$?
+  if [[ -d $product ]]; then
+        cp ${product}/*/GRANULE/*/IMG_DATA/*B04.jp2 ${product}/*/GRANULE/*/IMG_DATA/*B8A.jp2 ${product}/*/GRANULE/*/IMG_DATA/*B11.jp2 ${product}/*/GRANULE/*/IMG_DATA/*B12.jp2 ${PROCESSING_HOME}
+	res=$?
+  elif [[ -f $product ]]; then
+        unzip -qq -o -j ${product} */GRANULE/*/IMG_DATA/*B04.jp2 */GRANULE/*/IMG_DATA/*B8A.jp2 */GRANULE/*/IMG_DATA/*B11.jp2 */GRANULE/*/IMG_DATA/*B12.jp2 -d ${PROCESSING_HOME}
+        res=$?
+  else
+        res="$product is not valid"
+  fi
+
   [ ${res} -ne 0 ] && return ${$ERR_UNCOMP}
   ciop-log "INFO" "Product uncompressed"
   ciop-log "INFO" "------------------------------------------------------------"
