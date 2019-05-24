@@ -44,8 +44,16 @@ function main() {
 
   ciop-log "INFO" "Uncompressing product"
   ciop-log "INFO" "------------------------------------------------------------"
-  unzip -qq -o -j ${product} */GRANULE/*/IMG_DATA/*B04.jp2 */GRANULE/*/IMG_DATA/*B8A.jp2 */GRANULE/*/IMG_DATA/*B11.jp2 */GRANULE/*/IMG_DATA/*B12.jp2 -d ${PROCESSING_HOME} 
-  res=$?
+  if [[ -d $product ]]; then
+        cp ${product}/*/GRANULE/*/IMG_DATA/*B04.jp2 ${product}/*/GRANULE/*/IMG_DATA/*B8A.jp2 ${product}/*/GRANULE/*/IMG_DATA/*B11.jp2 ${product}/*/GRANULE/*/IMG_DATA/*B12.jp2 ${PROCESSING_HOME}
+	res=$?
+  elif [[ -f $product ]]; then
+        unzip -qq -o -j ${product} */GRANULE/*/IMG_DATA/*B04.jp2 */GRANULE/*/IMG_DATA/*B8A.jp2 */GRANULE/*/IMG_DATA/*B11.jp2 */GRANULE/*/IMG_DATA/*B12.jp2 -d ${PROCESSING_HOME}
+        res=$?
+  else
+        res="$product is not valid"
+  fi
+
   [ ${res} -ne 0 ] && return ${$ERR_UNCOMP}
   ciop-log "INFO" "Product uncompressed"
   ciop-log "INFO" "------------------------------------------------------------"
@@ -123,18 +131,22 @@ function main() {
   ciop-log "INFO" "------------------------------------------------------------"
   METAFILE=${PROCESSING_HOME}/${string_inp:0:leng-8}_HOT_SPOT.tif.properties
 
+  echo "#Predefined Metadata" >> ${METAFILE}
   echo "title=STEMP - HOT-SPOT detection - ${date}" >> ${METAFILE}
   echo "date=${date}" >> ${METAFILE}
-  echo "Input\ product=${identifier}" >> ${METAFILE}
-  echo "Input\ product\ tile=$( echo ${identifier} | cut -d '_' -f 6)" >> ${METAFILE}
+  echo "#Input scene" >> ${METAFILE}
+  echo "Input product=${identifier}" >> ${METAFILE}
+  echo "Input product tile=$( echo ${identifier} | cut -d '_' -f 6)" >> ${METAFILE}
   # Resolution is fixed to 20m because:
   # - Bands B8A, B11 and B12 have already 20m resolution (https://earth.esa.int/web/sentinel/user-guides/sentinel-2-msi/resolutions/spatial)
   # - Band B04 is converted to 20m
   echo "Resolution=20m" >> ${METAFILE}
+  echo "#STEMP specifics" >> ${METAFILE}
   echo "Producer=INGV"  >> ${METAFILE}
-  echo "Service\ name=STEMP-S2 Full"  >> ${METAFILE}
-  echo "Service\ version=1.2.1"  >> ${METAFILE}
+  echo "Service name=STEMP-S2 Full"  >> ${METAFILE}
+  echo "Service version=1.2.1"  >> ${METAFILE}
   echo "HOT\ SPOT=Hot pixels(red),very hot pixels(yellow)"  >> ${METAFILE}
+  echo "#EOF"  >> ${METAFILE}
   
   ciop-log "INFO" "Metadata file content:"
   cat ${PROCESSING_HOME}/${string_inp:0:leng-8}_HOT_SPOT.tif.properties 1>&2
